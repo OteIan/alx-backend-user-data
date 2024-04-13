@@ -58,8 +58,8 @@ def get_logger() -> logging.Logger:
     """
     logging.basicConfig(
         level=logging.INFO,
-        format=RedactingFormatter(PII_FIELDS),
-        handlers=[logging.StreamHandler()]
+        handlers=[logging.StreamHandler().setFormatter(
+            RedactingFormatter(PII_FIELDS))]
     )
 
     logger = logging.getLogger("user_data")
