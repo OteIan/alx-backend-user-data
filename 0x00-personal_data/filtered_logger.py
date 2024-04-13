@@ -84,3 +84,31 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
         database=os.getenv("PERSONAL_DATA_DB_NAME", "")
     )
+
+
+def main():
+    """
+    Logs the info on a table
+    """
+    fields = "name,email,phone,ssn,password,ip,last_login,user_agent"
+    query = f"SELECT {fields} from users;"
+    columns = fields.split(',')
+    info_logger = get_logger()
+    connection = get_db()
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        for row in rows:
+            record = map(lambda i: f"{i[0]}={i[1]}", zip(columns, row))
+
+            message = f"{'; '.join(list(record))};"
+            args = ("user_data", logging.INFO, None, None, message, None, None)
+
+            logRecord = logging.LogRecord(*args)
+            info_logger.handle(logRecord)
+
+
+if __name__ == "__main__":
+    main()
