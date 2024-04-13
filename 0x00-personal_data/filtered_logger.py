@@ -17,6 +17,7 @@ def filter_datum(
     Returns the log message obfuscated
     """
     pattern = f"({'|'.join(fields)})=[^{separator}]+"
+    print(pattern)
 
     return re.sub(pattern,
                   lambda match: f"{match.group().split('=')[0]}={redaction}",
