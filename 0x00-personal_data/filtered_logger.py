@@ -3,8 +3,34 @@
 Filtered logger module
 """
 from typing import List
-import logging
 import re
+import logging
+
+
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class
+        """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields: List[str]):
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+        self.fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        """
+        Filters values in incoming log using filter_datum
+        """
+        message = super(RedactingFormatter, self).format(record)
+
+        return filter_datum(
+            self.fields,
+            self.REDACTION,
+            message,
+            self.SEPARATOR
+        )
 
 
 def filter_datum(
@@ -17,7 +43,6 @@ def filter_datum(
     Returns the log message obfuscated
     """
     pattern = f"({'|'.join(fields)})=[^{separator}]+"
-    print(pattern)
 
     return re.sub(pattern,
                   lambda match: f"{match.group().split('=')[0]}={redaction}",
