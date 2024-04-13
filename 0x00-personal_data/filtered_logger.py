@@ -3,8 +3,10 @@
 Filtered logger module
 """
 from typing import List
+import os
 import re
 import logging
+import mysql.connector
 
 
 PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
@@ -69,3 +71,16 @@ def get_logger() -> logging.Logger:
     logger.propagate = False
 
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """
+    Creates a connector to a database
+    """
+    return mysql.connector.connect(
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        port=3306,
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        database=os.getenv("PERSONAL_DATA_DB_NAME", "")
+    )
