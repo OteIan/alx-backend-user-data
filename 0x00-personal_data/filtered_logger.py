@@ -56,13 +56,12 @@ def get_logger() -> logging.Logger:
     """
     Logs users
     """
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    
     logging.basicConfig(
         level=logging.INFO,
-        handlers=[
-            logging.StreamHandler().setFormatter(
-                RedactingFormatter(PII_FIELDS)
-            )
-        ]
+        handlers=[stream_handler]
     )
 
     logger = logging.getLogger("user_data")
