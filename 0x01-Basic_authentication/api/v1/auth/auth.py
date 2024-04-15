@@ -18,14 +18,14 @@ class Auth():
         require_auth
         """
         return False
-    
+
     def authorization_header(self, request=None) -> None:
         """
         authorization_handler
         """
         return None
-    
-    def current_user(self, request=None) -> TypeVar('User'): # type: ignore
+
+    def current_user(self, request=None) -> TypeVar('User'):  # type: ignore
         """
         current_user
         """
