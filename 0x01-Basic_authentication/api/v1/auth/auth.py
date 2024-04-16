@@ -23,6 +23,12 @@ class Auth():
             path += '/'
         if path not in excluded_paths:
             return True
+
+        for i in excluded_paths:
+            if i.endswith('*'):
+                example = i.lstrip('*')
+                if path.startswith(example):
+                    return False
         return False
 
     def authorization_header(self, request=None) -> None:
