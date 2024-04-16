@@ -23,11 +23,10 @@ class Auth():
             path += '/'
         if path not in excluded_paths:
             return True
-
+        
         for i in excluded_paths:
             if i.endswith('*'):
-                example = i.lstrip('*')
-                if path.startswith(example):
+                if path.startswith(i[:len(i) - 1]):
                     return False
         return False
 
