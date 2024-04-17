@@ -59,12 +59,10 @@ def before_request() -> None:
                                         '/api/v1/unauthorized/',
                                         '/api/v1/forbidden/',
                                         '/api/v1/auth_session/login/']):
-        if not auth.authorization_header(request):
+        if not auth.authorization_header(request) and auth.session_cookie(request) is None:
             abort(401)
         if not auth.current_user(request):
             abort(403)
-        if not auth.session_cookie(request):
-            abort(401)
 
         request.current_user = auth.current_user(request)
 
