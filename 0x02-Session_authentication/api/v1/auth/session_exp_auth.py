@@ -31,6 +31,8 @@ class SessionExpAuth(SessionAuth):
         return session_id
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
+        """User id for session id
+        """
         if session_id in self.user_id_by_session_id:
             if self.session_duration <= 0:
                 return session_id
