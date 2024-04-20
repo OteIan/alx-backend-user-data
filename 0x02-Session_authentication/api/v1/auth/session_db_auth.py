@@ -16,6 +16,8 @@ class SessionDBAuth(SessionExpAuth):
         """
         Create session
         """
+        if user_id is None:
+            return None
         session_id = super().create_session(user_id)
 
         if isinstance(session_id, str):
@@ -31,29 +33,41 @@ class SessionDBAuth(SessionExpAuth):
         """
         User id for session id
         """
-        try:
-            session = UserSession.search({'session_id': session_id})
-        except Exception:
+        if session_id is None:
             return None
-        if len(session) <= 0:
-            return None
-        current_time = datetime.now()
-        time_span = timedelta(seconds=self.session_duration)
-        total_time = session[0].created_at + time_span
+        
+        UserSession.load_from_file()
+        user_session = UserSession.search({'session_id': session_id})
 
-        if current_time > total_time:
+        if not user_session:
             return None
-        return session_id[0].user_id
+        
+        user_session = user_session[0]
+
+        start_time = user_session.created_at
+        time_delta = timedelta(seconds=self.session_duration)
+
+        if (start_time + time_delta) < datetime.now():
+            return None
+        return user_session.user_id
 
     def destroy_session(self, request=None) -> bool:
         """
         Destroy session
         """
         session_id = self.session_cookie(request)
-        session = UserSession.search({'session_id': session_id})
-
-        if not session and len(session) <= 0:
+        if session_id is None or not self.user_id_for_session_id(session_id):
+            return False
+        
+        user_session = UserSession.search({'session_id': session_id})
+        if not user_session:
             return False
 
-        session[0].remove()
+        user_session = user_session[0]
+        try:
+            user_session.remove()
+            UserSession.save_to_file()
+        except Exception:
+            return False
+        
         return True
