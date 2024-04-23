@@ -45,11 +45,12 @@ class DB:
         """
         Returns first row of users based on a certain parameter
         """
-        try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if user is None:
-                raise NoResultFound
-        except InvalidRequestError as e:
-            raise e
-
+        user_keys = ['id', 'email', 'hashed_password',
+                     'session_id', 'reset_token']
+        for key in kwargs.keys():
+            if key not in user_keys:
+                raise InvalidRequestError
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            raise NoResultFound
         return user
