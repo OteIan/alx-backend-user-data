@@ -3,8 +3,10 @@
 Flask app
 """
 from flask import Flask, jsonify
+from auth import Auth
 
 app = Flask(__name__)
+AUTH = Auth()
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
